@@ -37,6 +37,7 @@ export const StripeApp = () => {
               headers: {
                 'Content-Type': 'application/json',
               },
+            //   body: "Hello"
               body: JSON.stringify({
                 paymentMethodType: 'card',
                 currency: 'usd',
