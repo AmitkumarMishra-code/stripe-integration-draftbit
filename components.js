@@ -8,31 +8,35 @@ import { ButtonSolid } from '@draftbit/ui';
 import {
     CardField,
     useConfirmPayment,
-    // useStripe,
-    // confirmPaymentMethod,
     StripeProvider,
 } from '@stripe/stripe-react-native';
-
-// import * as StripeApi from './apis/StripeApi.js';
-
-const PUBLISHABLE_KEY =
-    'pk_test_51KfsfFSHaeoWoXPLwF98zLypJcOx9b07eSIHDR5H2vCKPpeL8tdjM4dpQtE12JHgqCMzEIiaxXQCW8YF5guEY3mg00jaSlATFn';
+const API_URL = 'https://stripe-proxy-test.herokuapp.com'
 
 export const StripeApp = () => {
     const [email, setEmail] = React.useState();
     const [cardDetails, setCardDetails] = React.useState();
-    // const [loading, setLoading] = React.useState(false);
+    const [publishableKey, setPublishableKey] = React.useState(null);
     const { confirmPayment, loading } = useConfirmPayment();
-    // const { confirmPayment } = useStripe();
+
+    const getPublishableKey = async() => {
+        const response = await fetch(`${API_URL}/get-publishable-key`)
+        const {publishableKeyFromServer, error} = await response.json()
+        if(error){
+            Alert.alert("Something went wrong. Please refresh the page!")
+        }
+        else{
+            setPublishableKey(publishableKeyFromServer)
+        }
+    }
+
+    React.useEffect(async() => {
+        await getPublishableKey()
+    }, [])
 
     const fetchPaymentIntentClientSecret = async() => {
         try {
-            // const response = await StripeApi.createIntentPOST({
-            //     paymentMethodType: 'card',
-            //     currency: 'usd',
-            // });
 
-            const response = await fetch(`https://stripe-proxy-test.herokuapp.com/create-payment-intent`, {
+            const response = await fetch(`${API_URL}/create-payment-intent`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -88,7 +92,7 @@ export const StripeApp = () => {
         //3.Confirm the payment with the card details
     };
     return ( 
-    <StripeProvider publishableKey = { PUBLISHABLE_KEY } >
+    <StripeProvider publishableKey = { publishableKey } >
         <View style = { styles.container } >
         <TextInput autoCapitalize = "none"
         placeholder = "E-mail"
