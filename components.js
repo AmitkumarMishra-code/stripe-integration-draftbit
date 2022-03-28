@@ -79,7 +79,6 @@ export const StripeApp = () => {
                     }
                 );
                 if (error) {
-                    console.log('In If ', error.message);
                     alert(`Payment Confirmation Error ${error.message}`);
                 } else if (paymentIntent) {
                     alert('Payment Successful');
