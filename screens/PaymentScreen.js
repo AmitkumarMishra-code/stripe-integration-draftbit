@@ -5,11 +5,12 @@ import { ScreenContainer } from '@draftbit/ui';
 import { StyleSheet, View } from 'react-native';
 
 const PaymentScreen = props => {
+  const { navigation } = props;
   return (
     <ScreenContainer>
       <View style={styles.ViewEt} pointerEvents={'auto'}>
         <Utils.CustomCodeErrorBoundary>
-          <CustomCode.StripeApp />
+          <CustomCode.StripeApp navigation = {navigation} />
         </Utils.CustomCodeErrorBoundary>
       </View>
     </ScreenContainer>

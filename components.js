@@ -12,11 +12,13 @@ import {
 } from '@stripe/stripe-react-native';
 const API_URL = 'https://stripe-proxy-test.herokuapp.com'
 
-export const StripeApp = () => {
-    const [email, setEmail] = React.useState();
+export const StripeApp = ({navigation}) => {
+    const [email, setEmail] = React.useState('');
     const [cardDetails, setCardDetails] = React.useState();
     const [publishableKey, setPublishableKey] = React.useState(null);
     const { confirmPayment, loading } = useConfirmPayment();
+    const cardRef = React.useRef(null)
+    const emailRef = React.useRef(null)
 
     const getPublishableKey = async() => {
         const response = await fetch(`${API_URL}/get-publishable-key`)
@@ -81,7 +83,13 @@ export const StripeApp = () => {
                 if (error) {
                     alert(`Payment Confirmation Error ${error.message}`);
                 } else if (paymentIntent) {
-                    alert('Payment Successful');
+                    // alert('Payment Successful');
+                    console.log('Routing....')
+                    cardRef.current.clear()
+                    emailRef.current.clear()
+                    navigation.navigate("SuccessScreen", {
+                            paymentIntent: paymentIntent
+                    })
                     console.log('Payment successful ', paymentIntent);
                 }
             }
@@ -93,25 +101,29 @@ export const StripeApp = () => {
     return ( 
     <StripeProvider publishableKey = { publishableKey } >
         <View style = { styles.container } >
-        <TextInput autoCapitalize = "none"
-        placeholder = "E-mail"
-        keyboardType = "email-address"
-        onChange = { value => setEmail(value.nativeEvent.text) }
-        style = { styles.input }
+        <TextInput 
+            autoCapitalize = "none"
+            placeholder = "E-mail"
+            keyboardType = "email-address"
+            onChange = { value => setEmail(value.nativeEvent.text) }
+            style = { styles.input }
+            ref={emailRef}
         /> 
-        <CardField postalCodeEnabled = { true }
-        placeholder = {
-            {
-                number: '4242 4242 4242 4242',
+        <CardField 
+            postalCodeEnabled = { true }
+            placeholder = {
+                {
+                    number: '4242 4242 4242 4242',
+                }
             }
-        }
-        cardStyle = { styles.card }
-        style = { styles.cardContainer }
-        onCardChange = {
-            cardDetails => {
-                setCardDetails(cardDetails);
+            cardStyle = { styles.card }
+            style = { styles.cardContainer }
+            ref={cardRef}
+            onCardChange = {
+                cardDetails => {
+                    setCardDetails(cardDetails);
+                }
             }
-        }
         /> 
         <ButtonSolid 
             onPress = { handlePayPress }

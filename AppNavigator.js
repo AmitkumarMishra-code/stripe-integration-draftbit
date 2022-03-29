@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import theme from './themes/DraftbitTheme.js';
 
 import PaymentScreen from './screens/PaymentScreen';
+import SuccessScreen from './screens/SuccessScreen.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,6 +59,11 @@ export default function RootAppNavigator() {
         <Stack.Screen
           name="PaymentScreen"
           component={PaymentScreen}
+          options={{ title: 'Payment' }}
+        />
+         <Stack.Screen
+          name="SuccessScreen"
+          component={SuccessScreen}
           options={{ title: 'Payment' }}
         />
       </Stack.Navigator>
