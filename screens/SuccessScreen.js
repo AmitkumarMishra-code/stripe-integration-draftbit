@@ -1,17 +1,17 @@
 import React from 'react';
 import { ScreenContainer, withTheme } from '@draftbit/ui';
 import { StyleSheet, Text } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SuccessScreen = props => {
   const { theme } = props;
+  const [successMessage, setSuccessMessage] = React.useState('Congratulations!');
+  
   const {paymentIntent} = props.route.params;
 
-  const [successMessage, setSuccessMessage] =
-    React.useState('Congratulations!');
-
-  React.useEffect(() => {
+  useFocusEffect(() => {
     setSuccessMessage(`Received ${(paymentIntent.amount/100).toFixed(2)} ${paymentIntent.currency.toUpperCase()} \n\nfrom ${paymentIntent.shipping.name}\n\nfor ${paymentIntent.description}!`)
-  },[])
+  })
 
   return (
     <ScreenContainer style={styles.screen}>

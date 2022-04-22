@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TextInput, Alert } from 'react-native';
 import { ButtonSolid } from '@draftbit/ui';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     CardField,
     useConfirmPayment,
@@ -16,20 +17,32 @@ export const StripeApp = ({navigation, amount}) => {
     const cardRef = React.useRef(null)
     const emailRef = React.useRef(null)
 
-    const getPublishableKey = async() => {
-        const response = await fetch(`${API_URL}/get-publishable-key`)
-        const {publishableKeyFromServer, error} = await response.json()
-        if(error){
-            Alert.alert("Something went wrong. Please refresh the page!")
-        }
-        else{
-            setPublishableKey(publishableKeyFromServer)
-        }
-    }
+    // const getPublishableKey = async() => {
+    //     const response = await fetch(`${API_URL}/get-publishable-key`)
+    //     const {publishableKeyFromServer, error} = await response.json()
+    //     if(error){
+    //         Alert.alert("Something went wrong. Please refresh the page!")
+    //     }
+    //     else{
+    //         setPublishableKey(publishableKeyFromServer)
+    //     }
+    // }
 
-    React.useEffect(async() => {
-        await getPublishableKey()
-    }, [])
+    useFocusEffect(
+        React.useCallback(() => {
+            async function getPublishableKey(){
+                const response = await fetch(`${API_URL}/get-publishable-key`)
+                const {publishableKeyFromServer, error} = await response.json()
+                if(error){
+                    Alert.alert("Something went wrong. Please refresh the page!")
+                }
+                else{
+                    setPublishableKey(publishableKeyFromServer)
+                }
+            }
+            getPublishableKey()
+        })
+    )
 
     const fetchPaymentIntentClientSecret = async() => {
         try {
@@ -84,6 +97,7 @@ export const StripeApp = ({navigation, amount}) => {
                     console.log('Routing....')
                     cardRef.current.clear()
                     emailRef.current.clear()
+                    setPublishableKey(null)
                     navigation.navigate("SuccessScreen", {
                             paymentIntent: paymentIntent
                     })
